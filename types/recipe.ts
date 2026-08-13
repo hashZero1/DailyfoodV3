@@ -24,9 +24,20 @@ export interface RecipeNutrient {
   unit: string;
 }
 
+export interface RecipeInstructionStep {
+  number: number;
+  step: string;
+}
+
+export interface RecipeAnalyzedInstruction {
+  name?: string;
+  steps: RecipeInstructionStep[];
+}
+
 export interface RecipeDetail extends RecipeSummary {
   summary?: string; // HTML from Spoonacular — sanitize before rendering
   instructions?: string; // HTML from Spoonacular — sanitize before rendering
+  analyzedInstructions?: RecipeAnalyzedInstruction[];
   extendedIngredients?: RecipeIngredient[];
   nutrition?: {
     nutrients: RecipeNutrient[];

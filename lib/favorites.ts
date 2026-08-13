@@ -20,9 +20,24 @@ export async function listFavorites(userId: string): Promise<FavoriteRecord[]> {
   return data;
 }
 
+export async function isFavorited(
+  userId: string,
+  recipeId: number,
+): Promise<boolean> {
+  const { data, error } = await supabase
+    .from("favorites")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("recipe_id", recipeId)
+    .maybeSingle();
+
+  if (error) throw new Error(error.message);
+  return data !== null;
+}
+
 export async function addFavorite(
   userId: string,
-  recipe: { id: number; title: string; image?: string }
+  recipe: { id: number; title: string; image?: string },
 ): Promise<void> {
   const { error } = await supabase.from("favorites").upsert(
     {
@@ -31,7 +46,7 @@ export async function addFavorite(
       title: recipe.title,
       image: recipe.image ?? null,
     },
-    { onConflict: "user_id,recipe_id" }
+    { onConflict: "user_id,recipe_id" },
   );
 
   if (error) throw new Error(error.message);
@@ -39,7 +54,7 @@ export async function addFavorite(
 
 export async function removeFavorite(
   userId: string,
-  recipeId: number
+  recipeId: number,
 ): Promise<void> {
   const { error } = await supabase
     .from("favorites")
