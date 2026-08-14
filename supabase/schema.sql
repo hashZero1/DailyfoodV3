@@ -26,6 +26,12 @@ create table if not exists pantry_items (
   created_at timestamptz not null default now()
 );
 
+-- Added for the Phase 2 pantry feature: categories, expiration tracking,
+-- and a per-item low-stock threshold. Safe to re-run.
+alter table pantry_items add column if not exists category text;
+alter table pantry_items add column if not exists expires_at date;
+alter table pantry_items add column if not exists low_stock_threshold numeric;
+
 create table if not exists meal_plan_entries (
   id uuid primary key default gen_random_uuid(),
   user_id text not null,

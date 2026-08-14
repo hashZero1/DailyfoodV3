@@ -5,6 +5,7 @@ import type {
   SearchFilters,
   SearchResult,
 } from "@/types/recipe";
+import type { FridgeMatchRecipe } from "@/types/fridge";
 
 // "server-only" makes it a build error to accidentally import this file
 // from a Client Component — the API key must never reach the browser.
@@ -15,7 +16,7 @@ function getApiKey(): string {
   const key = process.env.SPOONACULAR_API_KEY;
   if (!key) {
     throw new Error(
-      "SPOONACULAR_API_KEY is not set. Add it to .env.local (see .env.local.example)."
+      "SPOONACULAR_API_KEY is not set. Add it to .env.local (see .env.local.example).",
     );
   }
   return key;
@@ -23,7 +24,7 @@ function getApiKey(): string {
 
 async function spoonacularFetch<T>(
   path: string,
-  params: Record<string, string | number | boolean | undefined> = {}
+  params: Record<string, string | number | boolean | undefined> = {},
 ): Promise<T> {
   const url = new URL(`${BASE_URL}${path}`);
   url.searchParams.set("apiKey", getApiKey());
@@ -42,7 +43,7 @@ async function spoonacularFetch<T>(
   if (!res.ok) {
     const body = await res.json().catch(() => ({}));
     throw new Error(
-      body?.message || `Spoonacular request failed (${res.status})`
+      body?.message || `Spoonacular request failed (${res.status})`,
     );
   }
 
@@ -50,7 +51,7 @@ async function spoonacularFetch<T>(
 }
 
 export async function getRandomRecipes(
-  number = 10
+  number = 10,
 ): Promise<{ recipes: RecipeSummary[] }> {
   return spoonacularFetch("/recipes/random", { number });
 }
@@ -58,7 +59,7 @@ export async function getRandomRecipes(
 export async function searchRecipes(
   filters: SearchFilters,
   offset = 0,
-  number = 12
+  number = 12,
 ): Promise<SearchResult> {
   return spoonacularFetch("/recipes/complexSearch", {
     query: filters.query,
@@ -74,7 +75,7 @@ export async function searchRecipes(
 }
 
 export async function getTrendingRecipes(
-  number = 8
+  number = 8,
 ): Promise<{ results: RecipeSummary[] }> {
   // Spoonacular's own popularity ranking (aggregateLikes), so "Trending"
   // is real signal rather than a static hardcoded list of recipe IDs.
@@ -82,6 +83,59 @@ export async function getTrendingRecipes(
     sort: "popularity",
     number,
     addRecipeInformation: true,
+  });
+}
+
+interface RawIngredientMatch {
+  id: number;
+  name: string;
+  image?: string;
+}
+
+interface RawFindByIngredientsResult {
+  id: number;
+  title: string;
+  image?: string;
+  usedIngredientCount: number;
+  missedIngredientCount: number;
+  missedIngredients: RawIngredientMatch[];
+}
+
+export async function findRecipesByIngredients(
+  ingredients: string[],
+  number = 20,
+): Promise<FridgeMatchRecipe[]> {
+  if (ingredients.length === 0) return [];
+
+  const raw = await spoonacularFetch<RawFindByIngredientsResult[]>(
+    "/recipes/findByIngredients",
+    {
+      ingredients: ingredients.join(","),
+      number,
+      ranking: 1, // maximize used ingredients over minimizing missing
+      ignorePantry: true,
+    },
+  );
+
+  // Spoonacular gives raw used/missed counts — we compute our own match
+  // percentage from them rather than relying on their ranking alone,
+  // per the roadmap's "rank results using your own match score" note.
+  return raw.map((r) => {
+    const total = r.usedIngredientCount + r.missedIngredientCount;
+    return {
+      id: r.id,
+      title: r.title,
+      image: r.image,
+      usedIngredientCount: r.usedIngredientCount,
+      missedIngredientCount: r.missedIngredientCount,
+      missedIngredients: r.missedIngredients.map((mi) => ({
+        id: mi.id,
+        name: mi.name,
+        image: mi.image,
+      })),
+      matchPercent:
+        total > 0 ? Math.round((r.usedIngredientCount / total) * 100) : 0,
+    };
   });
 }
 

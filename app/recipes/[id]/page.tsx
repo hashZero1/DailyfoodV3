@@ -1,10 +1,10 @@
-import Image from "next/image";
 import { notFound } from "next/navigation";
 import DOMPurify from "isomorphic-dompurify";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { RecipeImage } from "@/components/RecipeImage";
 import { getRecipeById } from "@/lib/spoonacular";
 import { isFavorited } from "@/lib/favorites";
 import { auth0 } from "@/lib/auth0";
@@ -45,16 +45,13 @@ export default async function RecipeDetailPage({
     <main className="mx-auto max-w-4xl px-6 py-10">
       <div className="grid gap-8 lg:grid-cols-2">
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-800">
-          {recipe.image && (
-            <Image
-              src={recipe.image}
-              alt={recipe.title}
-              fill
-              sizes="(max-width: 1024px) 100vw, 50vw"
-              className="object-cover"
-              priority
-            />
-          )}
+          <RecipeImage
+            src={recipe.image}
+            alt={recipe.title}
+            sizes="(max-width: 1024px) 100vw, 50vw"
+            className="object-cover"
+            priority
+          />
         </div>
 
         <div className="flex flex-col">

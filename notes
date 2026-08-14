@@ -1,0 +1,5 @@
+No new dependencies needed — this only uses the shadcn Button you already installed.
+
+One thing worth flagging: getRecipeById in lib/spoonacular.ts caches results for 10 minutes (next: { revalidate: 600 }) — fine for recipe data, which barely changes, but if you favorite/unfavorite and don't see it reflect immediately on /favorites, that's Next's page-level caching on the Server Component, not the Spoonacular cache. Let me know if you hit that and I'll add a revalidatePath call to the Server Action.
+
+Roadmap-wise, that closes out everything originally scoped as Phase 1 (search + filters, detail page, favorites). Next up is Phase 2 — pantry ("what's in my fridge") and the meal planner, both of which need their Supabase tables added (pantry_items and meal_plan_entries — already in your supabase/schema.sql if you ran that) plus data-access modules following the same pattern as lib/favorites.ts. Want me to start there, or something else first?

@@ -25,6 +25,7 @@ export async function toggleFavoriteAction(
     await addFavorite(session.user.sub, recipe);
     return { ok: true, favorited: true };
   } catch (error) {
+    console.error("toggleFavoriteAction failed:", error);
     const message = error instanceof Error ? error.message : "Unknown error";
     return { ok: false, reason: "error", message };
   }

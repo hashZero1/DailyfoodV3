@@ -11,11 +11,29 @@ export default async function Navbar() {
           🍳 Recipe Assistant
         </Link>
         <div className="flex items-center gap-6 text-sm font-medium">
-          <Link href="/search" className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white">
+          <Link
+            href="/search"
+            className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
+          >
             Search
           </Link>
-          <Link href="/favorites" className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white">
+          <Link
+            href="/favorites"
+            className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
+          >
             Favorites
+          </Link>
+          <Link
+            href="/pantry"
+            className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
+          >
+            Pantry
+          </Link>
+          <Link
+            href="/fridge"
+            className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
+          >
+            My Fridge
           </Link>
           {session?.user ? (
             <div className="flex items-center gap-3">

@@ -8,7 +8,7 @@ const nextConfig: NextConfig = {
         hostname: "**",
       },
       {
-        protocol: "http",
+        protocol: "https",
         hostname: "img.spoonacular.com",
       },
     ],
