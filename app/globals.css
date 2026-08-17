@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&family=Google+Sans+Flex:opsz,wght@6..144,1..1000&family=Lobster&display=swap");
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
@@ -127,4 +128,14 @@
   html {
     @apply font-sans;
   }
+}
+
+h1,
+h2,
+h3 {
+  font-family: "Lobster", sans-serif;
+}
+
+body {
+  font-family: "DM Sans", sans-serif;
 }

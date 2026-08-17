@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { FavoriteButton } from "@/components/FavoriteButton";
+import { AddToMealPlanButton } from "@/components/mealplan/AddToMealPlanButton";
 import { RecipeImage } from "@/components/RecipeImage";
 import { getRecipeById } from "@/lib/spoonacular";
 import { isFavorited } from "@/lib/favorites";
@@ -72,7 +73,7 @@ export default async function RecipeDetailPage({
             {recipe.readyInMinutes && <span>{recipe.readyInMinutes} min</span>}
           </div>
 
-          <div className="mt-6">
+          <div className="mt-6 flex flex-wrap gap-3">
             <FavoriteButton
               recipe={{
                 id: recipe.id,
@@ -80,6 +81,13 @@ export default async function RecipeDetailPage({
                 image: recipe.image,
               }}
               initialFavorited={favorited}
+            />
+            <AddToMealPlanButton
+              recipe={{
+                id: recipe.id,
+                title: recipe.title,
+                image: recipe.image,
+              }}
             />
           </div>
         </div>

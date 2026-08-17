@@ -139,6 +139,24 @@ export async function findRecipesByIngredients(
   });
 }
 
+export function extractMacros(recipe: RecipeDetail): {
+  calories: number | null;
+  proteinG: number | null;
+  carbsG: number | null;
+  fatG: number | null;
+} {
+  const nutrients = recipe.nutrition?.nutrients ?? [];
+  const find = (name: string) =>
+    nutrients.find((n) => n.name === name)?.amount ?? null;
+
+  return {
+    calories: find("Calories"),
+    proteinG: find("Protein"),
+    carbsG: find("Carbohydrates"),
+    fatG: find("Fat"),
+  };
+}
+
 export async function getRecipeById(id: number): Promise<RecipeDetail> {
   return spoonacularFetch(`/recipes/${id}/information`, {
     includeNutrition: true,

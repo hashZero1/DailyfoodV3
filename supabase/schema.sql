@@ -43,6 +43,22 @@ create table if not exists meal_plan_entries (
   created_at timestamptz not null default now()
 );
 
+-- Added for the meal planner's daily macro totals. Snapshotted at
+-- add-time (from Spoonacular's nutrition data) rather than re-fetched
+-- on every planner page load. Safe to re-run.
+alter table meal_plan_entries add column if not exists calories numeric;
+alter table meal_plan_entries add column if not exists protein_g numeric;
+alter table meal_plan_entries add column if not exists carbs_g numeric;
+alter table meal_plan_entries add column if not exists fat_g numeric;
+
+-- Added for the meal planner's daily calorie/macro totals — a nutrition
+-- snapshot taken when the meal is planned, so totals don't require
+-- re-fetching every recipe's nutrition on every page load. Safe to re-run.
+alter table meal_plan_entries add column if not exists calories numeric;
+alter table meal_plan_entries add column if not exists protein numeric;
+alter table meal_plan_entries add column if not exists carbs numeric;
+alter table meal_plan_entries add column if not exists fat numeric;
+
 create index if not exists favorites_user_id_idx on favorites (user_id);
 create index if not exists pantry_items_user_id_idx on pantry_items (user_id);
 create index if not exists meal_plan_entries_user_id_idx on meal_plan_entries (user_id);

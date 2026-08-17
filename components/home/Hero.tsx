@@ -1,7 +1,7 @@
 export default function Hero() {
   return (
     <section className="bg-gradient-to-b from-orange-50 to-white px-6 py-20 text-center dark:from-zinc-900 dark:to-black">
-      <h1 className="mx-auto max-w-2xl text-4xl font-bold tracking-tight text-zinc-900 sm:text-5xl dark:text-zinc-50">
+      <h1 className="mx-auto max-w-2xl text-4xl tracking-tight text-zinc-900 sm:text-6xl dark:text-zinc-50">
         Find your next favorite recipe
       </h1>
       <p className="mx-auto mt-4 max-w-xl text-lg text-zinc-600 dark:text-zinc-400">
