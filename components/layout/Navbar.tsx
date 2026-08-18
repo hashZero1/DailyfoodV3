@@ -41,6 +41,12 @@ export default async function Navbar() {
           >
             Meal Plan
           </Link>
+          <Link
+            href="/shopping-list"
+            className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
+          >
+            Shopping List
+          </Link>
           {session?.user ? (
             <div className="flex items-center gap-3">
               <span className="text-zinc-500 dark:text-zinc-400">

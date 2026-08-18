@@ -51,6 +51,46 @@ alter table meal_plan_entries add column if not exists protein_g numeric;
 alter table meal_plan_entries add column if not exists carbs_g numeric;
 alter table meal_plan_entries add column if not exists fat_g numeric;
 
+create table if not exists shopping_list_items (
+  id uuid primary key default gen_random_uuid(),
+  user_id text not null,
+  name text not null,
+  quantity numeric,
+  unit text,
+  checked boolean not null default false,
+  source text, -- recipe title this came from, or null if added manually
+  created_at timestamptz not null default now()
+);
+
+create index if not exists shopping_list_items_user_id_idx on shopping_list_items (user_id);
+alter table shopping_list_items enable row level security;
+
+create table if not exists shopping_list_items (
+  id uuid primary key default gen_random_uuid(),
+  user_id text not null,
+  name text not null,
+  quantity numeric,
+  unit text,
+  checked boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists shopping_list_items_user_id_idx on shopping_list_items (user_id);
+alter table shopping_list_items enable row level security;
+
+create table if not exists shopping_list_items (
+  id uuid primary key default gen_random_uuid(),
+  user_id text not null,
+  name text not null,
+  quantity numeric,
+  unit text,
+  checked boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists shopping_list_items_user_id_idx on shopping_list_items (user_id);
+alter table shopping_list_items enable row level security;
+
 -- Added for the meal planner's daily calorie/macro totals — a nutrition
 -- snapshot taken when the meal is planned, so totals don't require
 -- re-fetching every recipe's nutrition on every page load. Safe to re-run.

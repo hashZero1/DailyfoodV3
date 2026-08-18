@@ -2,6 +2,7 @@ import Link from "next/link";
 import { auth0 } from "@/lib/auth0";
 import { listMealPlanEntries } from "@/lib/mealplan";
 import { MealPlanGrid } from "@/components/mealplan/MealPlanGrid";
+import { GenerateShoppingListButton } from "@/components/mealplan/GenerateShoppingListButton";
 import { Button } from "@/components/ui/button";
 
 function getWeekStart(dateStr?: string): Date {
@@ -85,6 +86,10 @@ export default async function MealPlanPage({
           <Button variant="outline" size="sm">
             <Link href={nextWeekHref}>Next</Link>
           </Button>
+          <GenerateShoppingListButton
+            startDate={toISODate(weekStart)}
+            endDate={toISODate(weekEnd)}
+          />
         </div>
       </div>
 

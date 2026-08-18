@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { FavoriteButton } from "@/components/FavoriteButton";
 import { AddToMealPlanButton } from "@/components/mealplan/AddToMealPlanButton";
+import { AddIngredientsButton } from "@/components/shoppinglist/AddIngredientsButton";
 import { RecipeImage } from "@/components/RecipeImage";
 import { getRecipeById } from "@/lib/spoonacular";
 import { isFavorited } from "@/lib/favorites";
@@ -88,6 +89,9 @@ export default async function RecipeDetailPage({
                 title: recipe.title,
                 image: recipe.image,
               }}
+            />
+            <AddIngredientsButton
+              recipe={{ id: recipe.id, title: recipe.title }}
             />
           </div>
         </div>
