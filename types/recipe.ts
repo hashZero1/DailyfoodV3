@@ -54,6 +54,8 @@ export interface SearchFilters {
   intolerances?: string;
   maxReadyTime?: number;
   type?: string; // meal type: main course, dessert, etc.
+  maxCalories?: number;
+  minProtein?: number; // grams
 }
 
 export interface SearchResult {

@@ -2,6 +2,7 @@ import { Suspense } from "react";
 import { searchRecipes } from "@/lib/spoonacular";
 import { CUISINES, DIETS, MEAL_TYPES } from "@/lib/constant";
 import RecipeCard from "@/components/RecipeCard";
+import { AiSearchBar } from "@/components/search/AiSearchBar";
 import { Button } from "@/components/ui/button";
 
 const PAGE_SIZE = 12;
@@ -24,6 +25,8 @@ async function SearchResults({
   const diet = first(searchParams.diet) ?? "";
   const type = first(searchParams.type) ?? "";
   const maxReadyTime = first(searchParams.maxReadyTime);
+  const maxCalories = first(searchParams.maxCalories);
+  const minProtein = first(searchParams.minProtein);
   const offset = Number(first(searchParams.offset) ?? "0") || 0;
 
   const { results, totalResults } = await searchRecipes(
@@ -33,6 +36,8 @@ async function SearchResults({
       diet: diet || undefined,
       type: type || undefined,
       maxReadyTime: maxReadyTime ? Number(maxReadyTime) : undefined,
+      maxCalories: maxCalories ? Number(maxCalories) : undefined,
+      minProtein: minProtein ? Number(minProtein) : undefined,
     },
     offset,
     PAGE_SIZE,
@@ -45,6 +50,8 @@ async function SearchResults({
     if (diet) params.set("diet", diet);
     if (type) params.set("type", type);
     if (maxReadyTime) params.set("maxReadyTime", maxReadyTime);
+    if (maxCalories) params.set("maxCalories", maxCalories);
+    if (minProtein) params.set("minProtein", minProtein);
     params.set("offset", String(nextOffset));
     return `/search?${params.toString()}`;
   };
@@ -69,12 +76,12 @@ async function SearchResults({
       </div>
       <div className="mt-10 flex justify-center gap-3">
         {offset > 0 && (
-          <Button variant="outline" asChild>
+          <Button variant="outline">
             <a href={buildPageUrl(Math.max(0, offset - PAGE_SIZE))}>Previous</a>
           </Button>
         )}
         {offset + PAGE_SIZE < totalResults && (
-          <Button variant="outline" asChild>
+          <Button variant="outline">
             <a href={buildPageUrl(offset + PAGE_SIZE)}>Next</a>
           </Button>
         )}
@@ -90,12 +97,18 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
   const diet = first(resolvedParams.diet) ?? "";
   const type = first(resolvedParams.type) ?? "";
   const maxReadyTime = first(resolvedParams.maxReadyTime) ?? "";
+  const maxCalories = first(resolvedParams.maxCalories) ?? "";
+  const minProtein = first(resolvedParams.minProtein) ?? "";
 
   return (
     <main className="mx-auto max-w-6xl px-6 py-10">
       <h1 className="text-2xl font-bold text-zinc-900 dark:text-zinc-50">
         Search recipes
       </h1>
+
+      <div className="mt-6">
+        <AiSearchBar />
+      </div>
 
       <form
         action="/search"
@@ -150,6 +163,22 @@ export default async function SearchPage({ searchParams }: SearchPageProps) {
           name="maxReadyTime"
           defaultValue={maxReadyTime}
           placeholder="Max minutes"
+          min={1}
+          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+        />
+        <input
+          type="number"
+          name="maxCalories"
+          defaultValue={maxCalories}
+          placeholder="Max calories"
+          min={1}
+          className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
+        />
+        <input
+          type="number"
+          name="minProtein"
+          defaultValue={minProtein}
+          placeholder="Min protein (g)"
           min={1}
           className="rounded-lg border border-zinc-300 px-3 py-2 text-sm dark:border-zinc-700 dark:bg-zinc-900"
         />

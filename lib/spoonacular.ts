@@ -68,6 +68,8 @@ export async function searchRecipes(
     intolerances: filters.intolerances,
     maxReadyTime: filters.maxReadyTime,
     type: filters.type,
+    maxCalories: filters.maxCalories,
+    minProtein: filters.minProtein,
     addRecipeInformation: true,
     offset,
     number,
