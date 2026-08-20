@@ -36,6 +36,12 @@ export default async function Navbar() {
             My Fridge
           </Link>
           <Link
+            href="/cook-with-what-i-have"
+            className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
+          >
+            Cook With What I Have
+          </Link>
+          <Link
             href="/meal-plan"
             className="text-zinc-600 hover:text-zinc-900 dark:text-zinc-300 dark:hover:text-white"
           >
