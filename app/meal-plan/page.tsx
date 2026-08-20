@@ -4,6 +4,7 @@ import { listMealPlanEntries } from "@/lib/mealplan";
 import { MealPlanGrid } from "@/components/mealplan/MealPlanGrid";
 import { GenerateShoppingListButton } from "@/components/mealplan/GenerateShoppingListButton";
 import { Button } from "@/components/ui/button";
+import { GenerateAiPlanButton } from "@/components/mealplan/GenerateAiPlanButton";
 
 function getWeekStart(dateStr?: string): Date {
   const base = dateStr ? new Date(`${dateStr}T00:00:00`) : new Date();
@@ -91,6 +92,10 @@ export default async function MealPlanPage({
             endDate={toISODate(weekEnd)}
           />
         </div>
+      </div>
+
+      <div className="mt-4">
+        <GenerateAiPlanButton weekStart={toISODate(weekStart)} />
       </div>
 
       {entries.length === 0 && (
