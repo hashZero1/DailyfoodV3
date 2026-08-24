@@ -205,3 +205,38 @@ export async function explainMissingIngredients(
   if (!text) throw new Error("Empty response from Gemini");
   return JSON.parse(text) as MissingIngredientExplanation[];
 }
+
+// --- Recipe cost estimate in INR (real-world/India-focused enhancement) ---
+
+export async function estimateCostInINR(params: {
+  title: string;
+  pricePerServingUSDCents: number | null;
+  ingredients: string[];
+}): Promise<{ estimatedINR: number }> {
+  const ai = getClient();
+
+  const contents = params.pricePerServingUSDCents
+    ? `Recipe: ${params.title}. Spoonacular reports a per-serving cost of ${(params.pricePerServingUSDCents / 100).toFixed(2)} USD. Convert this to approximate Indian Rupees using a reasonable current USD-to-INR exchange rate.`
+    : `Recipe: ${params.title}. Ingredients: ${params.ingredients.join(", ")}. No pricing data is available. Estimate a reasonable approximate per-serving cost in Indian Rupees for cooking this at home in India, based on typical Indian grocery prices for these ingredients.`;
+
+  const response = await ai.models.generateContent({
+    model: MODEL,
+    contents,
+    config: {
+      systemInstruction:
+        "You estimate approximate per-serving recipe costs in Indian Rupees (INR) for a home cook in India. This is always a rough estimate, never an exact figure. Respond with only the numeric rupee amount.",
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          estimatedINR: { type: Type.NUMBER },
+        },
+        required: ["estimatedINR"],
+      },
+    },
+  });
+
+  const text = response.text;
+  if (!text) throw new Error("Empty response from Gemini");
+  return JSON.parse(text) as { estimatedINR: number };
+}

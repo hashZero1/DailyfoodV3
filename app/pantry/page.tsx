@@ -2,6 +2,7 @@ import { auth0 } from "@/lib/auth0";
 import { listPantryItems } from "@/lib/pantry";
 import { PantryList } from "@/components/pantry/PantryList";
 import { Button } from "@/components/ui/button";
+import { UseItUpSection } from "@/components/pantry/UseItupsection";
 
 export default async function PantryPage() {
   const session = await auth0.getSession();
@@ -15,7 +16,7 @@ export default async function PantryPage() {
         <p className="mt-2 text-zinc-500 dark:text-zinc-400">
           Your pantry is tied to your account.
         </p>
-        <Button asChild className="mt-6">
+        <Button className="mt-6">
           <a href="/auth/login?returnTo=/pantry">Log in</a>
         </Button>
       </main>
@@ -34,6 +35,7 @@ export default async function PantryPage() {
       </p>
 
       <div className="mt-6">
+        <UseItUpSection items={items} />
         <PantryList initialItems={items} />
       </div>
     </main>

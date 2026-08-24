@@ -45,6 +45,7 @@ export interface RecipeDetail extends RecipeSummary {
   diets?: string[];
   cuisines?: string[];
   dishTypes?: string[];
+  pricePerServing?: number;
 }
 
 export interface SearchFilters {

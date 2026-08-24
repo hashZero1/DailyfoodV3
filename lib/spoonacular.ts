@@ -159,6 +159,12 @@ export function extractMacros(recipe: RecipeDetail): {
   };
 }
 
+export async function getWinePairing(
+  foodName: string,
+): Promise<{ pairedWines: string[]; pairingText: string }> {
+  return spoonacularFetch("/food/wine/pairing", { food: foodName });
+}
+
 export async function getRecipeById(id: number): Promise<RecipeDetail> {
   return spoonacularFetch(`/recipes/${id}/information`, {
     includeNutrition: true,

@@ -7,6 +7,9 @@ import { FavoriteButton } from "@/components/FavoriteButton";
 import { AddToMealPlanButton } from "@/components/mealplan/AddToMealPlanButton";
 import { AddIngredientsButton } from "@/components/shoppinglist/AddIngredientsButton";
 import { RecipeImage } from "@/components/RecipeImage";
+import { IngredientsList } from "@/components/recipe/IngredientsList";
+import { CostEstimate } from "@/components/recipe/Costestimate";
+import { WinePairing } from "@/components/recipe/Winepairing";
 import { getRecipeById } from "@/lib/spoonacular";
 import { isFavorited } from "@/lib/favorites";
 import { auth0 } from "@/lib/auth0";
@@ -72,6 +75,7 @@ export default async function RecipeDetailPage({
           <div className="mt-6 flex items-center gap-6 text-sm text-zinc-600 dark:text-zinc-400">
             {recipe.servings && <span>{recipe.servings} servings</span>}
             {recipe.readyInMinutes && <span>{recipe.readyInMinutes} min</span>}
+            <CostEstimate recipe={recipe} />
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
@@ -111,21 +115,13 @@ export default async function RecipeDetailPage({
           <Separator className="my-8" />
           <Card>
             <CardContent className="pt-6">
-              <h2 className="text-xl font-semibold text-zinc-900 dark:text-zinc-50">
-                Ingredients
-              </h2>
-              <ul className="mt-4 grid gap-2 sm:grid-cols-2">
-                {recipe.extendedIngredients.map((ingredient) => (
-                  <li
-                    key={ingredient.id}
-                    className="text-zinc-700 dark:text-zinc-300"
-                  >
-                    {ingredient.original}
-                  </li>
-                ))}
-              </ul>
+              <IngredientsList
+                ingredients={recipe.extendedIngredients}
+                baseServings={recipe.servings ?? 1}
+              />
             </CardContent>
           </Card>
+          <WinePairing dish={recipe.title} />
         </>
       )}
 
