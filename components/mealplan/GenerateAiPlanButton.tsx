@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { DIETS } from "@/lib/constants";
+import { DIETS } from "@/lib/constant";
 import { generateAiMealPlanAction } from "@/app/actions/ai-mealplan";
 
 export function GenerateAiPlanButton({ weekStart }: { weekStart: string }) {
@@ -47,7 +47,9 @@ export function GenerateAiPlanButton({ weekStart }: { weekStart: string }) {
         result.skippedFilledSlots > 0
           ? ` (${result.skippedFilledSlots} slot${result.skippedFilledSlots === 1 ? "" : "s"} already had a meal planned, left as-is)`
           : "";
-      toast(`Filled in ${result.entriesCreated} meals for this week${skippedNote}`);
+      toast(
+        `Filled in ${result.entriesCreated} meals for this week${skippedNote}`,
+      );
       setOpen(false);
       router.refresh();
     });
@@ -79,7 +81,9 @@ export function GenerateAiPlanButton({ weekStart }: { weekStart: string }) {
         >
           <option value="">Any diet</option>
           {DIETS.map((d) => (
-            <option key={d} value={d}>{d}</option>
+            <option key={d} value={d}>
+              {d}
+            </option>
           ))}
         </select>
         <input
@@ -114,8 +118,8 @@ export function GenerateAiPlanButton({ weekStart }: { weekStart: string }) {
         </Button>
       </div>
       <p className="mt-2 text-xs text-zinc-400">
-        Only fills in empty slots — meals you&apos;ve already planned this
-        week are left untouched.
+        Only fills in empty slots — meals you&apos;ve already planned this week
+        are left untouched.
       </p>
     </div>
   );

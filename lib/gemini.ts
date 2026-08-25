@@ -2,6 +2,7 @@ import "server-only";
 import { GoogleGenAI, Type } from "@google/genai";
 import { CUISINES, DIETS, MEAL_TYPES } from "@/lib/constant";
 import type { MissingIngredientExplanation } from "@/types/cookwith";
+import type { RecipeExplanation } from "@/types/explanation";
 
 // Structured extraction, not open-ended reasoning — Flash-Lite is fast
 // and cheap, no need for a heavier model. Swap this string if desired.
@@ -239,4 +240,64 @@ export async function estimateCostInINR(params: {
   const text = response.text;
   if (!text) throw new Error("Empty response from Gemini");
   return JSON.parse(text) as { estimatedINR: number };
+}
+
+// --- AI Recipe Explanation (roadmap 6.4) ---
+
+export async function explainRecipe(recipe: {
+  title: string;
+  ingredients: string[]; // "original" ingredient lines, e.g. "2 cups paneer, cubed"
+  steps: { number: number; step: string }[];
+}): Promise<RecipeExplanation> {
+  const ai = getClient();
+
+  const contents = [
+    `Recipe: ${recipe.title}`,
+    `Ingredients:\n${recipe.ingredients.join("\n")}`,
+    `Steps:\n${recipe.steps.map((s) => `${s.number}. ${s.step}`).join("\n")}`,
+  ].join("\n\n");
+
+  const response = await ai.models.generateContent({
+    model: MODEL,
+    contents,
+    config: {
+      systemInstruction:
+        "You help a home cook understand a recipe before they start. Only reference ingredients and steps that actually appear above — never invent an ingredient, step, or technique detail not present in the recipe. ingredientNotes: only include ingredients that are genuinely unfamiliar or specialty items (an empty array is fine and expected for a simple recipe — don't force notes on common items like salt or onion). stepTips: only include a tip for a step where there's a real technique reason (why this order, why this temperature, a common mistake to avoid) — most simple steps need no tip at all. summary: 2-3 plain sentences on what this dish is and what to expect. beginnerVersion: rewrite the full instructions in simpler, more explicit language for a first-time cook, still covering every step in the original.",
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.OBJECT,
+        properties: {
+          summary: { type: Type.STRING },
+          ingredientNotes: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                name: { type: Type.STRING },
+                explanation: { type: Type.STRING },
+              },
+              required: ["name", "explanation"],
+            },
+          },
+          stepTips: {
+            type: Type.ARRAY,
+            items: {
+              type: Type.OBJECT,
+              properties: {
+                stepNumber: { type: Type.NUMBER },
+                tip: { type: Type.STRING },
+              },
+              required: ["stepNumber", "tip"],
+            },
+          },
+          beginnerVersion: { type: Type.STRING },
+        },
+        required: ["summary", "ingredientNotes", "stepTips", "beginnerVersion"],
+      },
+    },
+  });
+
+  const text = response.text;
+  if (!text) throw new Error("Empty response from Gemini");
+  return JSON.parse(text) as RecipeExplanation;
 }

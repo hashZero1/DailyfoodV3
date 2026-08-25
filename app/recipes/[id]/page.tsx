@@ -10,6 +10,7 @@ import { RecipeImage } from "@/components/RecipeImage";
 import { IngredientsList } from "@/components/recipe/IngredientsList";
 import { CostEstimate } from "@/components/recipe/Costestimate";
 import { WinePairing } from "@/components/recipe/Winepairing";
+import { RecipeExplanationPanel } from "@/components/recipe/RecipeExplanationPanel";
 import { getRecipeById } from "@/lib/spoonacular";
 import { isFavorited } from "@/lib/favorites";
 import { auth0 } from "@/lib/auth0";
@@ -109,6 +110,18 @@ export default async function RecipeDetailPage({
           }}
         />
       )}
+
+      <div className="mt-6">
+        <RecipeExplanationPanel
+          recipe={{
+            title: recipe.title,
+            ingredients: (recipe.extendedIngredients ?? []).map(
+              (i) => i.original,
+            ),
+            steps,
+          }}
+        />
+      </div>
 
       {recipe.extendedIngredients && recipe.extendedIngredients.length > 0 && (
         <>
