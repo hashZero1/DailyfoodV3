@@ -165,6 +165,15 @@ export async function getWinePairing(
   return spoonacularFetch("/food/wine/pairing", { food: foodName });
 }
 
+export async function getIngredientSubstitutes(
+  ingredientName: string,
+): Promise<{ substitutes: string[] }> {
+  const data = await spoonacularFetch<{ substitutes?: string[] }>(
+    "/food/ingredients/substitutes",
+    { ingredientName },
+  );
+  return { substitutes: data.substitutes ?? [] };
+}
 export async function getRecipeById(id: number): Promise<RecipeDetail> {
   return spoonacularFetch(`/recipes/${id}/information`, {
     includeNutrition: true,

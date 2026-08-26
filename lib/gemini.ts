@@ -3,9 +3,8 @@ import { GoogleGenAI, Type } from "@google/genai";
 import { CUISINES, DIETS, MEAL_TYPES } from "@/lib/constant";
 import type { MissingIngredientExplanation } from "@/types/cookwith";
 import type { RecipeExplanation } from "@/types/explanation";
+import { IngredientSubstitution } from "@/types/substitution";
 
-// Structured extraction, not open-ended reasoning — Flash-Lite is fast
-// and cheap, no need for a heavier model. Swap this string if desired.
 const MODEL = "gemini-3.5-flash-lite";
 
 function getClient(): GoogleGenAI {
@@ -300,4 +299,50 @@ export async function explainRecipe(recipe: {
   const text = response.text;
   if (!text) throw new Error("Empty response from Gemini");
   return JSON.parse(text) as RecipeExplanation;
+}
+
+// --- AI Ingredient Substitution (roadmap 6.5) ---
+
+export async function explainSubstitutes(
+  ingredientName: string,
+  recipeTitle: string,
+  spoonacularSubstitutes: string[],
+): Promise<IngredientSubstitution[]> {
+  const ai = getClient();
+
+  const hasRealData = spoonacularSubstitutes.length > 0;
+  const contents = hasRealData
+    ? `Recipe: ${recipeTitle}\nIngredient to substitute: ${ingredientName}\nKnown substitutes (from a food database — use exactly these, don't add more): ${spoonacularSubstitutes.join(", ")}`
+    : `Recipe: ${recipeTitle}\nIngredient to substitute: ${ingredientName}\nNo database substitutes are available for this ingredient. Suggest 2-3 practical, commonly-available substitutes yourself.`;
+
+  const response = await ai.models.generateContent({
+    model: MODEL,
+    contents,
+    config: {
+      systemInstruction: hasRealData
+        ? "For each substitute listed (use exactly that list, don't add or remove any), briefly explain the expected taste/texture change in this dish, and flag true if using it would materially change the character of the dish, false if it's a close swap. Keep each explanation under 25 words."
+        : "Suggest 2-3 practical, commonly-available substitutes for the ingredient, and for each, briefly explain the expected taste/texture change in this dish, and flag true if it would materially change the dish's character, false if it's a close swap. Keep each explanation under 25 words.",
+      responseMimeType: "application/json",
+      responseSchema: {
+        type: Type.ARRAY,
+        items: {
+          type: Type.OBJECT,
+          properties: {
+            name: { type: Type.STRING },
+            tasteTextureChange: { type: Type.STRING },
+            materiallyChanges: { type: Type.BOOLEAN },
+          },
+          required: ["name", "tasteTextureChange", "materiallyChanges"],
+        },
+      },
+    },
+  });
+
+  const text = response.text;
+  if (!text) throw new Error("Empty response from Gemini");
+  const parsed = JSON.parse(text) as Omit<IngredientSubstitution, "source">[];
+  return parsed.map((s) => ({
+    ...s,
+    source: hasRealData ? ("spoonacular" as const) : ("ai" as const),
+  }));
 }
