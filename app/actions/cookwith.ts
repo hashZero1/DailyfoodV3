@@ -2,6 +2,7 @@
 
 import { normalizeIngredients, explainMissingIngredients } from "@/lib/gemini";
 import { findRecipesByIngredients } from "@/lib/spoonacular";
+import { checkAiRateLimit } from "@/lib/ratelimit";
 import type { FridgeMatchRecipe } from "@/types/fridge";
 import type { MissingIngredientExplanation } from "@/types/cookwith";
 
@@ -12,6 +13,11 @@ export type NormalizeResult =
 export async function normalizeIngredientsAction(
   description: string,
 ): Promise<NormalizeResult> {
+  const rateLimit = await checkAiRateLimit();
+  if (rateLimit.limited) {
+    return { ok: false, message: rateLimit.message };
+  }
+
   const trimmed = description.trim();
   if (!trimmed) {
     return { ok: false, message: "Describe what you have first." };
@@ -49,6 +55,11 @@ export async function explainMissingAction(
   recipeTitle: string,
   missingIngredients: string[],
 ): Promise<ExplainResult> {
+  const rateLimit = await checkAiRateLimit();
+  if (rateLimit.limited) {
+    return { ok: false, message: rateLimit.message };
+  }
+
   try {
     const explanations = await explainMissingIngredients(
       recipeTitle,

@@ -2,6 +2,7 @@
 
 import { getIngredientSubstitutes } from "@/lib/spoonacular";
 import { explainSubstitutes } from "@/lib/gemini";
+import { checkAiRateLimit } from "@/lib/ratelimit";
 import type { IngredientSubstitution } from "@/types/substitution";
 
 export type SubstituteResult =
@@ -12,6 +13,11 @@ export async function getSubstitutesAction(
   ingredientName: string,
   recipeTitle: string,
 ): Promise<SubstituteResult> {
+  const rateLimit = await checkAiRateLimit();
+  if (rateLimit.limited) {
+    return { ok: false, message: rateLimit.message };
+  }
+
   try {
     const { substitutes } = await getIngredientSubstitutes(ingredientName);
     const substitutions = await explainSubstitutes(

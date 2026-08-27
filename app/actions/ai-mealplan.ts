@@ -6,6 +6,7 @@ import { searchRecipes, getRecipeById, extractMacros } from "@/lib/spoonacular";
 import { generateMealPlan } from "@/lib/gemini";
 import { addMealPlanEntry, listMealPlanEntries } from "@/lib/mealplan";
 import { listPantryItems } from "@/lib/pantry";
+import { checkAiRateLimit } from "@/lib/ratelimit";
 import type { MealType } from "@/types/mealplan";
 
 export interface AiMealPlanConstraints {
@@ -32,7 +33,7 @@ function addDaysISO(startISO: string, days: number): string {
 }
 
 export async function generateAiMealPlanAction(
-  constraints: AiMealPlanConstraints
+  constraints: AiMealPlanConstraints,
 ): Promise<GenerateAiMealPlanResult> {
   const session = await auth0.getSession();
   if (!session?.user?.sub) {
@@ -40,11 +41,12 @@ export async function generateAiMealPlanAction(
   }
   const userId = session.user.sub;
 
+  const rateLimit = await checkAiRateLimit();
+  if (rateLimit.limited) {
+    return { ok: false, reason: "error", message: rateLimit.message };
+  }
+
   try {
-    // Push the calorie target into Spoonacular's own filtering rather than
-    // asking the model to reason about nutrition math over a candidate
-    // list — the candidates are already roughly on-target before Gemini
-    // ever sees them.
     const perMealCalories = constraints.dailyCalories
       ? Math.round(constraints.dailyCalories / 3)
       : undefined;
@@ -61,7 +63,7 @@ export async function generateAiMealPlanAction(
             : undefined,
         },
         0,
-        12
+        12,
       ),
       searchRecipes(
         {
@@ -74,7 +76,7 @@ export async function generateAiMealPlanAction(
             : undefined,
         },
         0,
-        24
+        24,
       ),
     ]);
 
@@ -124,15 +126,15 @@ export async function generateAiMealPlanAction(
     const validBreakfastIds = new Set(breakfastCandidates.map((c) => c.id));
     const validMainIds = new Set(mainCandidates.map((c) => c.id));
 
-    // Don't clobber meals the user already planned manually — only fill
-    // empty slots.
     const weekEnd = addDaysISO(constraints.weekStart, 6);
     const existing = await listMealPlanEntries(
       userId,
       constraints.weekStart,
-      weekEnd
+      weekEnd,
     );
-    const filledSlots = new Set(existing.map((e) => `${e.date}|${e.meal_type}`));
+    const filledSlots = new Set(
+      existing.map((e) => `${e.date}|${e.meal_type}`),
+    );
 
     let entriesCreated = 0;
     let skippedFilledSlots = 0;
@@ -144,7 +146,7 @@ export async function generateAiMealPlanAction(
 
       const isBreakfast = mealType === "breakfast";
       const validIds = isBreakfast ? validBreakfastIds : validMainIds;
-      if (!validIds.has(slot.recipeId)) continue; // guard against a hallucinated id
+      if (!validIds.has(slot.recipeId)) continue;
 
       const date = addDaysISO(constraints.weekStart, slot.day);
       const key = `${date}|${mealType}`;
@@ -165,7 +167,7 @@ export async function generateAiMealPlanAction(
         image: full.image,
         ...macros,
       });
-      filledSlots.add(key); // guard against Gemini assigning the same slot twice
+      filledSlots.add(key);
       entriesCreated++;
     }
 

@@ -1,6 +1,7 @@
 "use server";
 
 import { explainRecipe } from "@/lib/gemini";
+import { checkAiRateLimit } from "@/lib/ratelimit";
 import type { RecipeExplanation } from "@/types/explanation";
 
 export type ExplainRecipeResult =
@@ -12,6 +13,11 @@ export async function explainRecipeAction(recipe: {
   ingredients: string[];
   steps: { number: number; step: string }[];
 }): Promise<ExplainRecipeResult> {
+  const rateLimit = await checkAiRateLimit();
+  if (rateLimit.limited) {
+    return { ok: false, message: rateLimit.message };
+  }
+
   try {
     const explanation = await explainRecipe(recipe);
     return { ok: true, explanation };

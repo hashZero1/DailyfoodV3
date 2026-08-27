@@ -3,3 +3,36 @@ No new dependencies needed — this only uses the shadcn Button you already inst
 One thing worth flagging: getRecipeById in lib/spoonacular.ts caches results for 10 minutes (next: { revalidate: 600 }) — fine for recipe data, which barely changes, but if you favorite/unfavorite and don't see it reflect immediately on /favorites, that's Next's page-level caching on the Server Component, not the Spoonacular cache. Let me know if you hit that and I'll add a revalidatePath call to the Server Action.
 
 Roadmap-wise, that closes out everything originally scoped as Phase 1 (search + filters, detail page, favorites). Next up is Phase 2 — pantry ("what's in my fridge") and the meal planner, both of which need their Supabase tables added (pantry_items and meal_plan_entries — already in your supabase/schema.sql if you ran that) plus data-access modules following the same pattern as lib/favorites.ts. Want me to start there, or something else first?
+
+// ----------------------------------------------------------------------------------- //
+// ------- 27 Thrusday Aug -----------------------------------------------------------------------------------////
+// ----------------------------------------------------------------------------------- //
+
+Critical — do these before anyone else touches it
+Rate-limit the AI Server Actions. Right now explainRecipeAction, parseSearchQueryAction, normalizeIngredientsAction, generateAiMealPlanAction etc. are callable by anyone, unlimited, several with no auth check at all (by design — Cook With What I Have and search are meant to be public). Without a limiter, someone can script a loop and run up your Gemini/Spoonacular bill fast. Cheapest fix: Upstash Redis + @upstash/ratelimit, keyed by IP for the public ones and by user id for the authenticated ones.
+
+Spoonacular quota management. The free tier is point-limited per day, and a few of your features (AI meal plan generation especially) burn multiple calls in one click. You need a plan for what happens at quota exhaustion — right now it'll just throw a generic error mid-feature. Worth a small wrapper that catches the specific quota-exceeded response and shows a clear "try again tomorrow" message instead of a stack trace.
+Confirm RLS is actually locked down. You enabled RLS with no policies on every table, which is correct — but it's worth a manual check in the Supabase dashboard that the anon/publishable key genuinely can't read or write anything, since a misconfigured policy here means one user's pantry/favorites/meal plan leaking to another.
+
+Auth0 production checklist: separate Auth0 application (or at least separate allowed callback URLs) for prod vs. dev, AUTH0*SECRET rotated to a fresh value (not the one from local dev), production domain added to Allowed Callback/Logout URLs.
+Secrets audit. Everything server-only right now looks correctly unexposed (SPOONACULAR_API_KEY, GEMINI_API_KEY, SUPABASE_SERVICE_ROLE_KEY, AUTH0_CLIENT_SECRET) — worth one final grep for NEXT_PUBLIC* prefixes to make sure nothing sensitive accidentally got one.
+Reliability — things that will break in real use
+Loading states are inconsistent. Some actions show "Thinking...", others just have a disabled button with no feedback. Worth a pass for consistency, especially on the AI Meal Planner (which can take several seconds — 21 recipe fetches in the worst case).
+No error boundaries. A single unhandled error anywhere in a Server Component currently white-screens that route. Next.js supports error.tsx per route segment — worth adding at least a root one.
+AI JSON parsing has no retry. If Gemini ever returns malformed JSON (rare with schema-constrained output, but not impossible) or the API times out, every AI feature just throws once and gives up. A single retry with backoff on the Gemini calls would meaningfully reduce user-visible flakiness.
+No empty/zero-state polish check across all pages — I built basic ones, but haven't audited them together for consistency (tone, layout).
+Performance
+Image domains — only img.spoonacular.com is allow-listed; if you ever add user-uploaded images this needs revisiting.
+Spoonacular response caching is currently 10 minutes via Next's fetch cache — reasonable, but worth deciding if that's the right number for your actual quota budget.
+Bundle size check — recharts, @google/genai, isomorphic-dompurify (which bundles jsdom) are all reasonably heavy. Worth running next build and checking the actual output sizes before deploying.
+Deployment
+Hosting decision — Vercel is the path of least resistance for Next.js + Server Actions, but confirm Supabase/Auth0/Spoonacular/Gemini are all fine being called from Vercel's edge/serverless regions (should be, but worth checking latency from wherever your actual users are, given this seems India-focused given the INR feature).
+Environment variables in prod — all the same ones from .env.local, set in your hosting provider's dashboard, not committed anywhere.
+Database migrations — you're running raw SQL by hand in Supabase's editor right now, which works but has no history/rollback. At minimum, keep supabase/schema.sql as the single source of truth and diff it against the live DB before each deploy.
+Polish that matters for a portfolio/demo context specifically
+SEO metadata — generateMetadata per recipe page (title/description from the actual recipe, not the default), since right now every page shares the same generic title.
+Accessibility pass — a lot of the custom UI (chip toggles, custom checkboxes) was built fast; worth a keyboard-navigation and screen-reader spot-check, especially on Fridge Matcher and Pantry.
+Mobile responsiveness spot-check — the meal-plan grid in particular (min-w-[880px]) is deliberately horizontally scrollable on mobile, which works but is worth confirming feels intentional rather than broken.
+A README that actually explains the architecture for anyone (a recruiter, a collaborator) looking at the repo cold — the grounding pattern (AI never invents data, Spoonacular/Supabase are sources of truth) is genuinely the most interesting engineering decision in this project and isn't visible from the code alone.
+
+If I were sequencing this: rate limiting → RLS verification → error boundaries → Auth0 prod config → deploy to Vercel → SEO/accessibility pass, with the rest as ongoing polish. Want me to start on any of these, or keep going with the remaining roadmap feature (recipe modification) first and treat this list as a final pass before you actually ship it?
