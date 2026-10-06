@@ -77,9 +77,21 @@ from the original research):**
 
 ### Phase 2 — Branded products
 
-**Source:** Open Food Facts India (barcode-indexed, ODbL-licensed)
-**Build:** `lib/openfoodfacts.ts`, `branded_products` table
+**Source:** Open Food Facts India (barcode-indexed, ODbL-licensed) — `in.openfoodfacts.org`
+for search (pre-filters to India-sold products; there's no separate India-only database),
+`world.openfoodfacts.org` for barcode lookups (global regardless of subdomain)
+**Build:** `lib/openfoodfacts.ts`, `lib/branded-products.ts` (cache-on-lookup), `branded_products`
+table
 **Infra:** none beyond Supabase
+**Status:** built — see files above and `supabase/nutrition-phase2-schema.sql`
+
+**Important adapter-level difference from Phase 1:** Open Food Facts is crowd-sourced, not a
+single lab dataset — a nutrient's unit (g/mg/µg) can vary per product, confirmed via OFF's own
+official Dart/Go client libraries modeling per-nutrient unit fields. `lib/openfoodfacts.ts`
+normalizes dynamically off each record's own `_unit` field rather than assuming a fixed
+multiplier the way the IFCT adapter safely could. This also means Phase 2 has no bulk seed
+script — unlike the ~542-food IFCT set, Open Food Facts has 3M+ products, so
+`branded_products` is populated lazily from real barcode lookups and searches instead.
 
 ### Phase 3 — Unit conversions
 
