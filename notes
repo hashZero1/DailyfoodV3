@@ -245,3 +245,94 @@ reduced duplication
 versioning
 dependency management
 avoiding excessive coupling
+
+<!-- ------------------- REACT 19 Features, hooks & actions ------------------------------------------------------------------------------------ -->
+<!-- ------------------------------------------------------------------------------------------------------------------------- -->
+
+1. useTransition() - The useTransition hook is a React concurrent feature that lets you update the state without blocking the user interface. It allows you to split your state updates into two categories: urgent updates (like typing in an input) which render immediately, and transitions (like filtering a massive list) which are processed in the background and can be interrupted if the user does something else
+
+it also replace the separate loading state like "isLoading" logic with it "isPending" (its a boolean value) when component load the data
+
+~ const [isPending, startTransition] = useTransition()
+const switchTabs = (tab) => startTransition(() => setTab(tab))
+
+inside jsx -> {isPending && <p>Content is loading</p>}
+
+2. React Compiler - so React.memo(), useMemo or useCallback become obsolete
+
+3. FormAction = it eliminate the code to handle form data all inputs controlled react and also don't need to include preventDefault function
+
+4. useActionState() -> const [state, actionFunction, isPending] = useActionState(fn, initial state)
+
+fn - action or reducerAction is want to run when the form gets submitted or whenever the actionFunction is gonna run
+actionFunctoin - <form action={actionFunction}>
+isPending - same loading state
+
+The Form snippet using useActioState :
+{
+const [name, actionFunction, isPending] = useActionState(updateName, {
+error: null,
+name: JSON.parse(localStorage.getItem("name")) || "Anonymous User"
+})
+async function updateName(prevState, formData){
+
+try{
+const newName = await updateName(formData.get ("name")) [p.s (input field value name = "value")]
+return newName
+} catch(error){
+return {...prevState, error}
+}
+}
+
+return(
+<> <p>{name}</p>
+{isPending && <p>Loading Data</p>}
+
+   <form action={actionFunction}>
+   <input type="text" name="name" required />
+   <button type="submit "> Submit</button>
+   </form>
+   {state.error && <p>{state.error.message}</p>}
+   </>
+)
+}
+
+5. useOptimistic() - provides optimistic state that can update to user immediately and will be automatically reverted if there's a problem with the update to the server.
+
+const [optimisticName, setOptimisticName] = useOptimistic(state.name)
+
+6. useFormStatus() - act as a context consumer for the nearest parent element and provides you information about the current status of that form.
+   in another words a Hook that gives you status information of the last form submission.
+
+7. use refs as a props Now we have dedicated "ref" prop
+   previously there is workaround be forwardRef function and then we have to pass ref to that component
+
+8. use() - Not a hook it's a API
+
+- Reads async resources and automatically suspends the component.
+- can replace the useContext hook
+
+## Before use() example fetching data from API
+
+const [pokemon, setPokemon] = useState(null)
+
+useEffect(() => {
+fetch(" Api------URL")
+.then(res => res.json())
+.then(data => setPokemon(data))
+}, [])
+
+return(
+<>
+<code>{data result} </code>
+</>
+)
+
+## after use() example fetching data from API
+
+const fetchPromise = fetch("URL ----------- API")
+.then(res => res.json())
+
+const pokemon = use(fetchPromise)
+
+rest stays same.....
