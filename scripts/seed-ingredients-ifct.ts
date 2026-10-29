@@ -27,7 +27,7 @@ async function main() {
 
     const { error } = await supabase
       .from("ingredients")
-      .upsert(ingredient, { onConflict: "source,source_id,region" });
+      .upsert(ingredient, { onConflict: "source,source_id" });
 
     if (error) {
       console.error(

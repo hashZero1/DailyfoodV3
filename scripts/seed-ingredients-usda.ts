@@ -1,3 +1,15 @@
+/**
+ * One-off seed script — Phase 1, USDA half.
+ * Usage: npx tsx scripts/seed-ingredients-usda.ts
+ *
+ * Seeds the `ingredients` table from a curated list of common raw-commodity
+ * search terms, using USDA Foundation/SR Legacy data only. This is a
+ * starting set, not the full ingredient catalog — extend SEED_QUERIES as
+ * the recipe corpus surfaces ingredients with no match yet.
+ *
+ * The IFCT half of Phase 1 is deliberately not included here yet — see the
+ * licensing note in chat before wiring that up.
+ */
 import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
 import { searchUsdaFoods, toCanonicalIngredient } from "../lib/usda";
@@ -21,6 +33,9 @@ const SEED_QUERIES = [
   "spinach, raw",
   "ghee",
   "yogurt, plain",
+  // ...extend as needed. Several Indian staples (paneer, atta, toor dal,
+  // specific regional vegetables) won't resolve well against USDA at all —
+  // that gap is exactly what IFCT is for.
 ];
 
 async function main() {
@@ -42,7 +57,7 @@ async function main() {
 
     const { error } = await supabase
       .from("ingredients")
-      .upsert(ingredient, { onConflict: "source,source_id,region" });
+      .upsert(ingredient, { onConflict: "source,source_id" });
 
     if (error) {
       console.error(`Failed to upsert "${query}":`, error.message);

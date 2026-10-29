@@ -80,8 +80,15 @@ const NUTRIENT_ID_MAP: Record<keyof CanonicalNutrients, number> = {
   vitamin_b6_mg: 1175,
 };
 
+// FDC returns TWO different shapes for the same data:
+//   /foods/search  -> flat:   { nutrientId, nutrientName, unitName, value }
+//   /food/{fdcId}  -> nested: { nutrient: { id, name, unitName }, amount }
+// (shape of the search response confirmed against a published example
+// payload.) The mapper below accepts both.
 interface RawFdcNutrient {
-  nutrient: { id: number; name: string; unitName: string };
+  nutrientId?: number;
+  value?: number;
+  nutrient?: { id: number; name: string; unitName: string };
   amount?: number;
 }
 
@@ -97,14 +104,35 @@ interface RawFdcSearchResult {
   totalHits: number;
 }
 
+// Foundation foods often report energy under the Atwater factors
+// (2048 specific, 2047 general) instead of 1008, so fall back to those
+// rather than leaving calories null. Not verified against live data
+// (no network path to USDA from the build sandbox) — spot-check a few
+// Foundation rows after seeding.
+const ENERGY_FALLBACK_IDS = [2048, 2047];
+
 function mapToCanonical(nutrients: RawFdcNutrient[]): CanonicalNutrients {
-  const byId = new Map(nutrients.map((n) => [n.nutrient.id, n.amount ?? null]));
+  const byId = new Map<number, number | null>();
+  for (const n of nutrients) {
+    const id = n.nutrientId ?? n.nutrient?.id;
+    const amount = n.value ?? n.amount ?? null;
+    if (id !== undefined) byId.set(id, amount);
+  }
   const result = { ...EMPTY_NUTRIENTS };
   for (const [field, nutrientId] of Object.entries(NUTRIENT_ID_MAP) as [
     keyof CanonicalNutrients,
     number,
   ][]) {
     result[field] = byId.get(nutrientId) ?? null;
+  }
+  if (result.calories_kcal === null) {
+    for (const id of ENERGY_FALLBACK_IDS) {
+      const v = byId.get(id);
+      if (v !== undefined && v !== null) {
+        result.calories_kcal = v;
+        break;
+      }
+    }
   }
   return result;
 }
