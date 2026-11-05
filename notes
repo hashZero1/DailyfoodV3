@@ -6,7 +6,7 @@
 Guarenteed Single instance - (prevent multiple copies of resourse/state)
 Global Access Point - (easy to use anywhere in application) (Need Thread-safe implementation)
 
-@ Disadvantag
+@ Disadvantage
 Threading Issues - (Race condition during instance creation)
 Testing Difficulties - (Can't create easily mock for unit tests - complex test setup)
 
@@ -73,24 +73,24 @@ Too much Javascript, Poor loading time, Poor SEO
 
 ## THICK vs THIN clients
 
-Thin Clients that that your static page delegate most of it's logic to the backend And Opposite for THICK Clients
+Thin Clients is that your static page delegate most of it's logic to the backend And Opposite for THICK Clients
 
 ---
 
-Now that's the Web part now we have mobile Users to cater with same So there is another Pattern introduced Calles
+Now that's the Web part now we have mobile Users to cater with same So there is another Pattern introduced Called
 
 ### BFF Pattern - Backend For Frontend
 
 ---- In this we split our backend so each frontend application get it's individual backend so they don't share the same
 because mobile application has different views and has different shape of data then a desktop application.
 
-That when GraphQL comes to solve the over fetching or under fetching problem on RESP API's
+That when GraphQL comes to solve the over fetching or under fetching problem on REST API's
 --// PRO's
 Tailored endpoints, Faster interation, Aggregates services
 --// Cons
 Tight coupling, Scalability limits(still higher than SPA's), Single point of failure
 
-# SSG/ISG/SSR -----------------//
+### SSG/ISG/SSR -----------------//
 
 1. SSG - Static Site Generation - (simple site generation - generate on backend then rendered on frontend) {1}
 2. ISR - Incremental Static Regenration (Upgrade over SSG ) - {2}
@@ -102,11 +102,11 @@ Tight coupling, Scalability limits(still higher than SPA's), Single point of fai
 
 3. SSR - Server Side Rendering - {3}
    -- In this the Key Concept is "Hyderation"
-   -- it still works the same concept render on backend and send the prerendered page to frontend but to achieve interactivity we need hyderations and Hyderations lifecycle like this :
+   -- it still works the same concept render on backend and send the pre-rendered page to frontend but to achieve interactivity we need hyderations and Hyderations lifecycle like this :
    -- Server Render the page and create a HTML string then
-   -- Initial Paing - Browser renders that inital HTML immediately giving the user Fast Contentful Paint(FCP) with DRY (non-interactive page)
+   -- Initial Paint - Browser renders that inital HTML immediately giving the user Fast Contentful Paint(FCP) with DRY (non-interactive page)
    -- Download & Execute - These Client side download the javascript bundle and execute it
-   -- Hyderation - the Framework traverse the DOM and attached to the prerendered HTML to make it interactive (like binding event handlers etc) and all of this is handle by React or framework
+   -- Hyderation - the Framework traverse the DOM and attached to the pre-rendered HTML to make it interactive (like binding event handlers etc) and all of this is handle by React or framework
 
 " But it still takes a long time until the user's can actually interact with webpage and click on something and nothing will happen
 and to achieve more faster interactive webpage there is tool like RSC "
@@ -336,3 +336,8 @@ const fetchPromise = fetch("URL ----------- API")
 const pokemon = use(fetchPromise)
 
 rest stays same.....
+
+<!--  ----------------------------------TOPIC ---------------------------------------------------------- -->
+
+TANSTACK QUERY
+same as React router - it has react QueryClient and QueryClientProvider

@@ -1,0 +1,70 @@
+{
+  "_readme": "Seed for unit_definitions and unit_conversions. RULE: no conversion row ships without a real, citable source (the seed script refuses rows with an empty source). `conversions` is intentionally empty until sourced values are added. Each conversion is { food_group | ingredient_ref:{source,source_id}, state: raw|cooked|any, unit, grams_per_unit  OR  density_g_per_ml (no unit), basis, source, note }.",
+  "unit_definitions": [
+    {
+      "unit": "katori",
+      "kind": "volume",
+      "ml": 225,
+      "basis": "user-defined",
+      "source": "Project owner: medium katori is about 200-250 ml; midpoint used",
+      "note": "Katori sizes vary by household. One constant, change it here and re-seed. A commercial blog cites 150 ml as 'standard' with no authoritative source; the owner's 200-250 ml was used instead."
+    },
+    {
+      "unit": "cup",
+      "kind": "volume",
+      "ml": 240,
+      "basis": "assumed",
+      "source": "Metric kitchen cup",
+      "note": "Not yet checked against ICMR-NIN Annexure I (suggested measuring katori/cups and spoons)."
+    },
+    {
+      "unit": "tbsp",
+      "kind": "volume",
+      "ml": 15,
+      "basis": "assumed",
+      "source": "Metric tablespoon",
+      "note": "Not yet checked against ICMR-NIN Annexure I."
+    },
+    {
+      "unit": "tsp",
+      "kind": "volume",
+      "ml": 5,
+      "basis": "assumed",
+      "source": "Metric teaspoon",
+      "note": "Not yet checked against ICMR-NIN Annexure I."
+    },
+    {
+      "unit": "piece",
+      "kind": "count",
+      "ml": null,
+      "basis": "assumed",
+      "source": "Counting unit; weight is per-ingredient",
+      "note": "Weights come from per-ingredient conversion rows."
+    },
+    {
+      "unit": "roti",
+      "kind": "count",
+      "ml": null,
+      "basis": "assumed",
+      "source": "Counting unit; medium roti assumed",
+      "note": "Weight is size-dependent; rows must state 'medium' in their note."
+    },
+    {
+      "unit": "idli",
+      "kind": "count",
+      "ml": null,
+      "basis": "assumed",
+      "source": "Counting unit; medium idli assumed",
+      "note": "Weight is size-dependent."
+    },
+    {
+      "unit": "dosa",
+      "kind": "count",
+      "ml": null,
+      "basis": "assumed",
+      "source": "Counting unit; medium dosa assumed",
+      "note": "Weight is size-dependent."
+    }
+  ],
+  "conversions": []
+}
