@@ -1,3 +1,13 @@
+/**
+ * Canonical nutrient schema — Phase 1 of the regional nutrition data
+ * subsystem (see nutrition-data-roadmap.md).
+ *
+ * USDA, IFCT, and (later) Open Food Facts each use a different shape for
+ * nutrition data. Every source adapter maps into this one shape, and this
+ * is the ONLY shape the rest of the app should ever read nutrition data as.
+ *
+ * All amounts are per 100g of the edible portion.
+ */
 export interface CanonicalNutrients {
   calories_kcal: number | null;
   protein_g: number | null;
@@ -66,6 +76,14 @@ export interface CanonicalIngredient {
   source: IngredientSource;
   source_id: string; // USDA fdcId (stringified) or IFCT food code
   region: string | null; // IFCT region tag; null for USDA / national-only entries
+  // IFCT group name (e.g. "Cereals and Millets"). Null/absent for USDA rows:
+  // I haven't verified a usable category field in USDA search results, so
+  // USDA rows only get ingredient-specific unit conversions for now.
+  food_group?: string | null;
+  // Local/regional names from the source (IFCT `lang` field), e.g. "Ramdana". Used by
+  // the Stage 2 resolver. Needs nutrition-stage2-schema.sql applied first.
+  aliases?: string[];
+  scientific_name?: string | null;
   is_cooked: boolean; // true for a pre-composed cooked-dish entry rather than a raw commodity
   per_100g: CanonicalNutrients;
 }

@@ -67,6 +67,11 @@ const UNIT_ALIASES: Record<string, string> = {
   dosas: "dosa",
 };
 
+export function isKnownUnitAlias(raw: string): boolean {
+  const cleaned = raw.trim().toLowerCase().replace(/\.+$/, "");
+  return Object.prototype.hasOwnProperty.call(UNIT_ALIASES, cleaned);
+}
+
 export function normalizeUnit(raw: string): string {
   const cleaned = raw.trim().toLowerCase().replace(/\.+$/, "");
   return UNIT_ALIASES[cleaned] ?? cleaned;

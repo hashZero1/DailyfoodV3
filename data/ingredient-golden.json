@@ -1,0 +1,299 @@
+{
+  "note": "Hand-written expectations from IFCT 2017 names. 'unresolved' = IFCT has no suitable entry (USDA/OFF may). 'ambiguous' = several IFCT entries fit equally and a user choice or a default policy is needed. Onion, tomato, rice, milk and egg expectations follow the owner's DEFAULT_PICKS policy (Nov 2026).",
+  "cases": [
+    {
+      "line": "1 cup toor dal",
+      "expect": "resolved",
+      "code": "B021"
+    },
+    {
+      "line": "200 g paneer",
+      "expect": "resolved",
+      "code": "L003"
+    },
+    {
+      "line": "2 tbsp ghee",
+      "expect": "resolved",
+      "code": "T013"
+    },
+    {
+      "line": "1 tsp turmeric powder",
+      "expect": "resolved",
+      "code": "G033"
+    },
+    {
+      "line": "1 tsp cumin seeds",
+      "expect": "resolved",
+      "code": "G025"
+    },
+    {
+      "line": "10 curry leaves",
+      "expect": "resolved",
+      "code": "G010"
+    },
+    {
+      "line": "1 cup bajra",
+      "expect": "resolved",
+      "code": "A003"
+    },
+    {
+      "line": "2 tbsp ragi flour",
+      "expect": "resolved",
+      "code": "A010"
+    },
+    {
+      "line": "1/2 cup jowar",
+      "expect": "resolved",
+      "code": "A005"
+    },
+    {
+      "line": "1 cup poha",
+      "expect": "resolved",
+      "code": "A011"
+    },
+    {
+      "line": "3 pieces jaggery",
+      "expect": "resolved",
+      "code": "I001"
+    },
+    {
+      "line": "1 cup semolina",
+      "expect": "resolved",
+      "code": "A022"
+    },
+    {
+      "line": "1 cup sooji",
+      "expect": "resolved",
+      "code": "A022"
+    },
+    {
+      "line": "2 cups atta",
+      "expect": "resolved",
+      "code": "A019"
+    },
+    {
+      "line": "1 cup besan",
+      "expect": "unresolved"
+    },
+    {
+      "line": "1 tsp salt",
+      "expect": "unresolved"
+    },
+    {
+      "line": "1 cup curd",
+      "expect": "unresolved"
+    },
+    {
+      "line": "250 g mutton",
+      "expect": "unresolved"
+    },
+    {
+      "line": "2 tbsp butter",
+      "expect": "unresolved"
+    },
+    {
+      "line": "2 boiled eggs",
+      "expect": "resolved",
+      "code": "M004"
+    },
+    {
+      "line": "1 onion, chopped",
+      "expect": "resolved",
+      "code": "G017"
+    },
+    {
+      "line": "2 tomatoes",
+      "expect": "resolved",
+      "code": "D075"
+    },
+    {
+      "line": "1 cup rice",
+      "expect": "resolved",
+      "code": "A015"
+    },
+    {
+      "line": "1 cup moong dal",
+      "expect": "resolved",
+      "code": "B010"
+    },
+    {
+      "line": "1 cup chana dal",
+      "expect": "resolved",
+      "code": "B001"
+    },
+    {
+      "line": "1 cup urad dal",
+      "expect": "resolved",
+      "code": "B003"
+    },
+    {
+      "line": "1 cup masoor dal",
+      "expect": "resolved",
+      "code": "B013"
+    },
+    {
+      "line": "1 cup rajma",
+      "expect": "ambiguous",
+      "among": ["B018", "B019", "B020"]
+    },
+    {
+      "line": "1 cup milk",
+      "expect": "resolved",
+      "code": "L002"
+    },
+    {
+      "line": "1 tbsp mustard oil",
+      "expect": "resolved",
+      "code": "T006"
+    },
+    {
+      "line": "2 tbsp groundnut oil",
+      "expect": "resolved",
+      "code": "T005"
+    },
+    {
+      "line": "50 g peanuts",
+      "expect": "resolved",
+      "code": "H012"
+    },
+    {
+      "line": "1 cup spinach",
+      "expect": "resolved",
+      "code": "C033"
+    },
+    {
+      "line": "1 cup cauliflower",
+      "expect": "resolved",
+      "code": "D036"
+    },
+    {
+      "line": "1 cup okra",
+      "expect": "resolved",
+      "code": "D056"
+    },
+    {
+      "line": "1 brinjal",
+      "expect": "ambiguous",
+      "among": ["D010", "D011", "D012", "D013", "D014", "D015"]
+    },
+    {
+      "line": "2 green chillies",
+      "expect": "ambiguous",
+      "among": ["G001", "G002", "G003", "G004", "G005"]
+    },
+    {
+      "line": "1 inch ginger",
+      "expect": "resolved",
+      "code": "G014"
+    },
+    {
+      "line": "4 cloves garlic",
+      "expect": "ambiguous",
+      "among": ["G011", "G012", "G013"]
+    },
+    {
+      "line": "1 cup coconut, grated",
+      "expect": "ambiguous",
+      "among": ["H006", "H007"]
+    },
+    {
+      "line": "1 tbsp coriander leaves",
+      "expect": "resolved",
+      "code": "G009"
+    },
+    {
+      "line": "1 tsp coriander seeds",
+      "expect": "resolved",
+      "code": "G024"
+    },
+    {
+      "line": "1 tsp fenugreek seeds",
+      "expect": "resolved",
+      "code": "G026"
+    },
+    {
+      "line": "1 tbsp tamarind pulp",
+      "expect": "resolved",
+      "code": "E064"
+    },
+    {
+      "line": "100 g cashew nuts",
+      "expect": "resolved",
+      "code": "H005"
+    },
+    {
+      "line": "10 almonds",
+      "expect": "resolved",
+      "code": "H001"
+    },
+    {
+      "line": "1 lemon",
+      "expect": "unresolved"
+    },
+    {
+      "line": "1 tsp sugar",
+      "expect": "unresolved"
+    },
+    {
+      "line": "1 cup honey",
+      "expect": "unresolved"
+    },
+    {
+      "line": "100 g tofu",
+      "expect": "unresolved"
+    },
+    {
+      "line": "1 cup oats",
+      "expect": "unresolved"
+    },
+    {
+      "line": "1 cup water",
+      "expect": "unresolved"
+    },
+    {
+      "line": "1 cup chicken",
+      "expect": "ambiguous",
+      "among": ["N001", "N002", "N003", "N004"]
+    },
+    {
+      "line": "1 cup carrot",
+      "expect": "ambiguous",
+      "among": ["F002", "F003"]
+    },
+    {
+      "line": "1 cup cabbage",
+      "expect": "ambiguous",
+      "among": ["C013", "C014", "C015", "C016"]
+    },
+    {
+      "line": "1 cup dal",
+      "expect": "ambiguous",
+      "among": []
+    },
+    {
+      "line": "1 apple",
+      "expect": "ambiguous",
+      "among": ["E001", "E002", "E003", "E004"]
+    },
+    {
+      "line": "1 banana",
+      "expect": "ambiguous",
+      "among": ["E009", "E010", "E011", "E012"]
+    },
+    {
+      "line": "2 potatoes",
+      "expect": "ambiguous",
+      "among": ["F006", "F007", "F008"]
+    },
+    {
+      "line": "1 egg",
+      "expect": "resolved",
+      "code": "M001"
+    },
+    {
+      "line": "2 eggs",
+      "expect": "resolved",
+      "code": "M001"
+    }
+  ]
+}
